@@ -18,7 +18,7 @@ Add the bundle in your composer.json:
 ```js
 {
     "require": {
-        "smile/ez-persistence-bundle": "*"
+        "smile/ez-persistence-bundle": "dev-master"
     }
 }
 ```
