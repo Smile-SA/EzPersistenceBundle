@@ -1,0 +1,24 @@
+parameters:
+    smile.persistent_code_manager.class: Smile\EzPersistenceBundle\Zeta\CodeManager
+    smile.persistent_cache_manager.class: ezcPersistentCacheManager
+    
+    smile.persistent_session.factory.class: Smile\EzPersistenceBundle\Zeta\SessionFactory
+    smile.persistent_session.class: ezcPersistentSession
+    
+services:
+    smile.persistent_code_manager:
+        class: %smile.persistent_code_manager.class%
+        arguments: [ @kernel ]
+        
+    smile.persistent_cache_manager:
+        class: %smile.persistent_cache_manager.class%
+        arguments: [ @smile.persistent_code_manager ]
+    
+    smile.persistent_session.factory:
+        class: %smile.persistent_session.factory.class%
+    
+    smile.persistent_session:
+        class: %smile.persistent_session.class%
+        factory_service: smile.persistent_session.factory
+        factory_method: getSession
+        arguments: [ @ezpublish.api.storage_engine.legacy.dbhandler, @smile.persistent_cache_manager ]

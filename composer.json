@@ -1,0 +1,18 @@
+{
+    "name": "smile/ez-persistence-bundle",
+    "description": "PersistentObjects for EZPublish 5.x",
+    "license": ["MIT"],
+    "authors": [
+        {
+            "name": "Smile SA",
+            "homepage": "http://www.smile.fr/"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "autoload": {
+        "psr-0": { "Smile\\EzPersistenceBundle": "" }
+    },
+    "target-dir": "Smile/EzPersistenceBundle"
+}
