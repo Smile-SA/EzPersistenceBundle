@@ -50,7 +50,13 @@ class CodeManager extends \ezcPersistentDefinitionManager
                 $bundlePath = $this->kernel->getBundle( $alias )->getPath();
                 $shortClassName = substr( $className, strlen( $namespace ) + 1 );
 
-                $definition = require $bundlePath . '/Resources/config/persistence/' . $shortClassName . '.php';
+                $definitionPath = $bundlePath . '/Resources/config/persistence/' . $shortClassName . '.php';
+
+                if ( file_exists( $definitionPath ) )
+                {
+                    $definition = require $definitionPath;
+                }
+                break;
             }
         }
 
