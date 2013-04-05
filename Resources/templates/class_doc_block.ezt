@@ -1,0 +1,4 @@
+{use $className, $propertyNames, $propertyTypes}
+/**
+ * {$className}
+ */
