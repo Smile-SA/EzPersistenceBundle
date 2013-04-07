@@ -18,8 +18,6 @@ class GeneratePersistentObjectsCommand extends ContainerAwareCommand
             ->setName( 'persistence:generate:objects' )
             ->setDescription( 'Generate a persistent object' )
             ->addOption( 'bundle', null, InputOption::VALUE_REQUIRED, 'The target bundle (short notation)' )
-            ->addOption( 'path', null, InputOption::VALUE_REQUIRED, 'The objects definition file path' )
-            ->addOption( 'format', null, InputOption::VALUE_OPTIONAL, 'The objects definition file format (xml or php, defaults to xml)', 'xml' )
             ->setHelp(
 <<<EOT
 The <info>persistence:generate-object</info> task generates PersistentObjects inside a bundle:
@@ -37,18 +35,24 @@ EOT
 
         if ( $input->isInteractive() )
         {
-            if ( ! $dialog->askConfirmation( $output, '<question>This will overwrite any existing class/definition. Do you confirm generation ? (y/n)</question>' ) )
+            if ( ! $dialog->askConfirmation( $output, '<question>This will overwrite any existing class/definition. Do you confirm generation ? (y/n)</question>', 'y' ) )
             {
                 $output->writeln( '<error>Command aborted</error>' );
-
                 return 1;
             }
         }
 
         $bundle = $this->getContainer()->get( 'kernel' )->getBundle( $input->getOption( 'bundle' ) );
         $bundlePath = $bundle->getPath();
-        $definitionsPath = $bundlePath . '/Resources/config/persistence/';
-        $objectsPath = $bundlePath . '/Persistence/';
+        $definitionsPath = $bundlePath . '/Resources/config/persistence';
+        $objectsPath = $bundlePath . '/Persistence';
+        $schemaFilePath = $definitionsPath . '/schema.xml';
+
+        if ( ! file_exists( $schemaFilePath ) )
+        {
+            $output->writeln( sprintf( '<error>Cannot find schema file : %s</error>', $schemaFilePath ) );
+            return 1;
+        }
 
         if ( ! file_exists( $definitionsPath ) )
         {
@@ -66,8 +70,8 @@ EOT
             ' -t' .
             ' -tp ' . escapeshellarg( __DIR__ . '/../Resources/templates/' ) .
             ' -p ' . escapeshellarg( $bundle->getNamespace() . '\\Persistence' ) .
-            ' -s ' . escapeshellarg( $input->getOption( 'path' ) ) .
-            ' -f ' . escapeshellarg( $input->getOption( 'format' ) ) .
+            ' -s ' . escapeshellarg( $schemaFilePath ) .
+            ' -f xml' .
             ' ' . escapeshellarg( $definitionsPath ) .
             ' ' . escapeshellarg( $objectsPath )
         );
