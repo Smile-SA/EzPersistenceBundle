@@ -52,3 +52,111 @@ public function registerBundles()
     );
 }
 ```
+
+Basic setup
+-----------
+
+### Create the schema file
+
+``` xml
+<!-- Resources/config/persistence/schema.xml -->
+
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<database>
+  <table>
+    <name>message</name>
+    <declaration>
+      <field>
+        <name>message_id</name>
+        <type>integer</type>
+        <autoincrement>true</autoincrement>
+        <notnull>true</notnull>
+        <default>0</default>
+      </field>
+      <field>
+        <name>title</name>
+        <type>text</type>
+        <length>255</length>
+        <notnull>true</notnull>
+        <default></default>
+      </field>
+      <field>
+        <name>content</name>
+        <type>text</type>
+        <length>255</length>
+        <notnull>true</notnull>
+        <default></default>
+      </field>
+      <index>
+        <name>primary</name>
+        <primary>true</primary>
+        <field>
+          <name>message_id</name>
+          <sorting>ascending</sorting>
+        </field>
+      </index>
+    </declaration>
+  </table>
+</database>
+```
+
+### Create the table
+
+``` sql
+CREATE TABLE message
+(
+    message_id INT UNSIGNED NOT NULL auto_increment,
+    title varchar(255),
+    content varchar(255),
+    PRIMARY KEY (message_id)
+);
+```
+
+### Generate classes and definitions
+
+``` bash
+$ php ezpublish/console persistence:generate:objects --bundle=eZDemoBundle
+```
+
+Usage
+-----
+
+### Create
+
+``` php
+use EzSystems\DemoBundle\Persistence\Message;
+...
+$session = $this->get('smile.persistent_session');
+
+$message = new Message();
+$message->title = 'Test';
+$message->content = 'This is a test';
+
+$session->save($message);
+```
+
+### Update
+
+``` php
+...
+$message->title = 'Test2';
+$session->update( $message );
+```
+
+### Load
+
+``` php
+...
+$message = $session->load( 'eZDemoBundle:Message', 1 );
+```
+
+### Find
+
+``` php
+...
+$q = $session->createFindQuery( 'eZDemoBundle:Message' );
+$q->where( $q->expr->eq( 'title', $q->bindValue( 'Test' ) ) );
+$messages = $session->find( $q, 'eZDemoBundle:Message' );
+```
+
+Refer to the [documentation](http://ezcomponents.org/docs/api/latest/introduction_PersistentObject.html) for advanced usage.
